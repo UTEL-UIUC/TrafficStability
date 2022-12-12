@@ -100,10 +100,18 @@ def add_arrow_to_line2D(
         arrows.append(p)
     return arrows
 
-def plot_cumm_curve(sims, save = None):
+def plot_cumm_curve(sims, model, save = None):
     fig, ax = plt.subplots(figsize=(8,6))
     color = ['red', 'blue', 'green', 'orange']
     for i, sim in enumerate(sims):
+        if model == 'k':
+            leg = "("+str(sim.start_density)+")"
+        elif model == 'kA':
+            leg = "("+str(sim.start_density)+"," + str(sim.start_inflow)+")"
+        elif model == 'ku':
+            leg = "("+str(sim.start_density)+"," + str(sim.start_u)+")"
+        elif model == 'kAu':
+            leg = "("+str(sim.start_density)+"," + str(sim.start_inflow) + "," +  str(sim.start_u)+")"
         cumm = sim.get_cumm_curve()
         time = datetime.datetime.now()
         cumm['time'] = cumm.apply(lambda row: time + timedelta(seconds=row['t']), axis=1)
@@ -116,8 +124,10 @@ def plot_cumm_curve(sims, save = None):
         cumm['cumm_arr'] = cumm.arr.cumsum()
         cumm['cumm_dep'] = cumm.dep.cumsum()
         cumm.head()
-        ax.plot(cumm.n.rolling('5s').mean(), cumm.arr.rolling('5s').sum()/5, label = 'Arrivals: '+str(i+1), color = color[i])
-        ax.plot(cumm.n.rolling('5s').mean(), cumm.dep.rolling('5s').sum()/5, label = 'Departures: '+str(i+1), color = color[i], ls = '--')
+        # ax.plot(cumm.n.rolling('5s').mean(), cumm.arr.rolling('5s').sum()/5, label = 'Arrivals: '+str(i+1), color = color[i])
+        # ax.plot(cumm.n.rolling('5s').mean(), cumm.dep.rolling('5s').sum()/5, label = 'Exits: '+str(i+1), color = color[i], ls = '--')
+        ax.plot(cumm.n.rolling('5s').mean(), cumm.arr.rolling('5s').sum()/5, label = 'Arrivals: ' + leg, color = color[i])
+        ax.plot(cumm.n.rolling('5s').mean(), cumm.dep.rolling('5s').sum()/5, label = 'Exits: ' + leg, color = color[i], ls = '--')
     
     ks = np.linspace(0,kj,500)
     ax.plot(ks,f(ks), alpha=0.2, color = 'k')
@@ -128,16 +138,26 @@ def plot_cumm_curve(sims, save = None):
         fig.savefig(save)
 
     
-def plot_Tn_curve(sims, save = None):
+def plot_Tn_curve(sims, model, save = None):
     fig, ax = plt.subplots(figsize=(8,6))
     color = ['red', 'blue', 'green', 'orange']
     for i, sim in enumerate(sims):
+        if model == 'k':
+            leg = 'k: '+  "("+str(sim.start_density)+")"
+        elif model == 'kA':
+            leg =  'k,A: '+"("+str(sim.start_density)+"," + str(sim.start_inflow)+")"
+        elif model == 'ku':
+            leg = 'k,u: '+"("+str(sim.start_density)+"," + str(sim.start_u)+")"
+        elif model == 'kAu':
+            leg = 'k,A,u: ' + "("+str(sim.start_density)+"," + str(sim.start_inflow) + "," +  str(sim.start_u)+")"
+
         cumm = sim.get_cumm_curve()
         time = datetime.datetime.now()
         cumm['time'] = cumm.apply(lambda row: time + timedelta(seconds=row['t']), axis=1)
         cumm['time'] = pd.to_datetime(cumm['time'])
         cumm = cumm.set_index('time')
-        ax.plot(cumm.t.rolling('5s').mean(), cumm.n.rolling('5s').mean(), label = "Run "+str(i+1), color = color[i])
+        # ax.plot(cumm.t.rolling('5s').mean(), cumm.n.rolling('5s').mean(), label = "Run "+str(i+1), color = color[i])
+        ax.plot(cumm.t.rolling('5s').mean(), cumm.n.rolling('5s').mean(), label = leg, color = color[i])
     
     ax.hlines(keq_0, 0, 180, ls = '--', color = 'k', alpha = 0.2)
     ax.hlines(keq_1, 0, 180, ls = '--', color = 'k', alpha = 0.2)

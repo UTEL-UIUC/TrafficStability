@@ -9,15 +9,26 @@ import matplotlib.patches as mpatches
 from turtle import color
 
 # define functions
-γ = .6
-v0 = 2.0
-α = 1.8
-ω = .25
+SEED = 1000
+# THETA = 1000000
+# BETA = 10
+kj = 2000
+v0 = 1.0
+α = 560
+ω = 40
 ε = np.finfo(float).eps
-v = np.vectorize(lambda k: np.maximum(v0 - γ*k,ε))
+v = np.vectorize(lambda k: np.maximum(v0*(1 - k/kj),1/1000))
 μ = lambda k: 1./v(k)
-D = lambda u: α - ω*u
-d = lambda A: (α-A)/ω
+def D(u):
+    if u > α/ω:
+        return 0
+    return α - ω*u
+D = np.vectorize(D)
+def Dinv(A):
+    if A > α:
+        return 0
+    return (α-A)/ω
+d = np.vectorize(Dinv)
 Z = lambda k: D(μ(k))
 f = lambda k: k*v(k)
 
