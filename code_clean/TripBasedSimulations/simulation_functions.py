@@ -163,14 +163,14 @@ def plot_Tn_curve(sims, model, save = None):
     ax.hlines(keq_1, 0, 180, ls = '--', color = 'k', alpha = 0.2)
     ax.hlines(keq_2, 0, 180, ls = '--', color = 'k', alpha = 0.2)
     y_bounds = ax.get_ylim()
-    ax.annotate(text='x', xy =(-0.02, ((keq_0-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='left' , rotation = 0)
-    ax.annotate(text='y', xy =(-0.02, ((keq_1-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='left' , rotation = 0)
-    ax.annotate(text='z', xy =(-0.02, ((keq_2-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='left' , rotation = 0)
+    ax.annotate(text=r'$x$', xy =(1.02, ((keq_0-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='right' , rotation = 0)
+    ax.annotate(text=r'$y$', xy =(1.02, ((keq_1-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='right' , rotation = 0)
+    ax.annotate(text=r'$z$', xy =(1.02, ((keq_2-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='right' , rotation = 0)
     # ax.annotate(xy=(0, keq_0), s = "x")
     # ax.annotate(xy=(0, keq_1), s = "y")
     # ax.annotate(xy=(0, keq_2), s = "z")
 
-    ax.set_xlim(0, 180)
+    ax.set_xlim(0, 100)
     ax.set(xlabel = r'$t$', ylabel = r'$k$')
     ax.legend()
     if save:
