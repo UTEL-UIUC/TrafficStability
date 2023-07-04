@@ -143,13 +143,17 @@ def plot_Tn_curve(sims, model, save = None):
     color = ['red', 'blue', 'green', 'orange']
     for i, sim in enumerate(sims):
         if model == 'k':
-            leg = 'k: '+  "("+str(sim.start_density)+")"
+            leg1 = r'$x:$ ({:.2f})'.format(keq_0)
+            leg2 = r'$y:$ ({:.2f})'.format(keq_1)
+            leg3 = r'$z:$ ({:.2f})'.format(keq_2)
         elif model == 'kA':
-            leg =  'k,A: '+"("+str(sim.start_density)+"," + str(sim.start_inflow)+")"
-        elif model == 'ku':
-            leg = 'k,u: '+"("+str(sim.start_density)+"," + str(sim.start_u)+")"
+            leg1 = r'$x:$ ({:.2f}, {:.2f})'.format(keq_0, D(μ(keq_0)))
+            leg2 = r'$y:$ ({:.2f}, {:.2f})'.format(keq_1, D(μ(keq_1)))
+            leg3 = r'$z:$ ({:.2f}, {:.2f})'.format(keq_2, D(μ(keq_2)))
         elif model == 'kAu':
-            leg = 'k,A,u: ' + "("+str(sim.start_density)+"," + str(sim.start_inflow) + "," +  str(sim.start_u)+")"
+            leg1 = r'$x:$ ({:.2f}, {:.2f}, {:.2f})'.format(keq_0, D(μ(keq_0)), μ(keq_0))
+            leg2 = r'$y:$ ({:.2f}, {:.2f}, {:.2f})'.format(keq_1, D(μ(keq_1)), μ(keq_1))
+            leg3 = r'$z:$ ({:.2f}, {:.2f}, {:.2f})'.format(keq_2, D(μ(keq_2)), μ(keq_2))
 
         cumm = sim.get_cumm_curve()
         time = datetime.datetime.now()
@@ -157,11 +161,11 @@ def plot_Tn_curve(sims, model, save = None):
         cumm['time'] = pd.to_datetime(cumm['time'])
         cumm = cumm.set_index('time')
         # ax.plot(cumm.t.rolling('5s').mean(), cumm.n.rolling('5s').mean(), label = "Run "+str(i+1), color = color[i])
-        ax.plot(cumm.t.rolling('5s').mean(), cumm.n.rolling('5s').mean(), label = leg, color = color[i])
+        ax.plot(cumm.t.rolling('5s').mean(), cumm.n.rolling('5s').mean(), color = 'k', alpha = 0.2)
     
-    ax.hlines(keq_0, 0, 180, ls = '--', color = 'k', alpha = 0.2)
-    ax.hlines(keq_1, 0, 180, ls = '--', color = 'k', alpha = 0.2)
-    ax.hlines(keq_2, 0, 180, ls = '--', color = 'k', alpha = 0.2)
+    ax.hlines(keq_0, 0, 180, ls = '-', color = 'red', alpha = 1, label = leg1)
+    ax.hlines(keq_1, 0, 180, ls = '-', color = 'blue', alpha = 1, label = leg2)
+    ax.hlines(keq_2, 0, 180, ls = '-', color = 'purple', alpha = 1, label = leg3)
     y_bounds = ax.get_ylim()
     ax.annotate(text=r'$x$', xy =(1.02, ((keq_0-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='right' , rotation = 0)
     ax.annotate(text=r'$y$', xy =(1.02, ((keq_1-y_bounds[0])/(y_bounds[1]-y_bounds[0]))), xycoords='axes fraction', verticalalignment='top', horizontalalignment='right' , rotation = 0)
@@ -170,8 +174,8 @@ def plot_Tn_curve(sims, model, save = None):
     # ax.annotate(xy=(0, keq_1), s = "y")
     # ax.annotate(xy=(0, keq_2), s = "z")
 
-    ax.set_xlim(0, 100)
+    ax.set_xlim(0, 60)
     ax.set(xlabel = r'$t$', ylabel = r'$k$')
-    ax.legend()
+    ax.legend(title = r'Equilibria ({}):'.format(model))
     if save:
         fig.savefig(save)
